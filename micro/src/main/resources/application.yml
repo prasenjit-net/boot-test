@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: micro
+server:
+  port: 6701
+  useForwardHeaders: true
+  tomcat:
+    remote-ip-header: X-Forworded-For
