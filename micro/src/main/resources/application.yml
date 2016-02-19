@@ -6,3 +6,6 @@ server:
   useForwardHeaders: true
   tomcat:
     remote-ip-header: X-Forworded-For
+
+info:
+  version: @project.version@

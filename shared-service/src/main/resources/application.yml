@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: sharedservice
+server:
+  port: 6702
+
+info:
+  version: @project.version@

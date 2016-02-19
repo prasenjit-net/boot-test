@@ -27,6 +27,8 @@
         <module>eureka</module>
         <module>zuul</module>
         <module>micro</module>
+        <module>shared-service</module>
+        <module>admin</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -44,6 +46,18 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.6</version>
@@ -56,7 +70,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Brixton.BUILD-SNAPSHOT</version>
+                <version>Angel.SR6</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
