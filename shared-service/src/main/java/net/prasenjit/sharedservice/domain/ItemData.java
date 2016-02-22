@@ -16,13 +16,11 @@
 
 package net.prasenjit.sharedservice.domain;
 
-import lombok.Data;
-
 /**
  * Created by pp03582 on 2/19/2016.
  */
-@Data
-public class SharedData {
+@lombok.Data
+public class ItemData {
     private DataType dataType;
     private Object data;
 }

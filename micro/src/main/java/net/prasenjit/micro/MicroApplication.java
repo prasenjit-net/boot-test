@@ -19,10 +19,12 @@ package net.prasenjit.micro;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 
 /**
  * Created by pp03582 on 2/18/2016.
  */
+@EnableFeignClients
 @EnableDiscoveryClient
 @SpringBootApplication
 public class MicroApplication {

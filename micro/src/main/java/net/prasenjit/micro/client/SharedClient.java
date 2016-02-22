@@ -14,27 +14,21 @@
  *    limitations under the License.
  */
 
-package net.prasenjit.sharedservice.controller;
+package net.prasenjit.micro.client;
 
-import net.prasenjit.sharedservice.domain.ItemData;
+import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.Map;
 
 /**
- * Created by pp03582 on 2/19/2016.
+ * Created by pp03582 on 2/22/2016.
  */
-@RestController
-@RequestMapping(value = "profile", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-public class ProfileController {
-
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public Map<String, ItemData> listAll(@PathVariable(value = "id") String id) {
-        return Collections.emptyMap();
-    }
+@FeignClient("sharedservice")
+public interface SharedClient {
+    @RequestMapping(value = "profile/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    Map<String, Data> findAllProfileProperties(@PathVariable("id") String profileId);
 }

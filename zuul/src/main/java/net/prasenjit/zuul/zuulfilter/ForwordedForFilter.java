@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ForwordedForFilter extends ZuulFilter {
 
     private static final String X_FORWARDED_FOR = "X-Forworded-For";
+    private static final String X_FORWARDED_PROTO = "X-Forwarded-Proto";
 
     @Autowired
     private ZuulProperties zuulProperties;
@@ -55,12 +56,16 @@ public class ForwordedForFilter extends ZuulFilter {
     @Override
     public Object run() {
         RequestContext ctx = RequestContext.getCurrentContext();
-        // Rely on HttpServletRequest to retrieve the correct remote address from upstream X-Forwarded-For header
+        // Rely on HttpServletRequest to retrieve the correct remote address
+        // from upstream X-Forwarded-For header
         HttpServletRequest request = ctx.getRequest();
         String remoteAddr = request.getRemoteAddr();
-        // Pass remote address downstream by setting X-Forwarded for header again on Zuul request
+        String protocol = request.isSecure() ? "https" : "http";
+        // Pass remote address downstream by setting X-Forwarded for header
+        // again on Zuul request
         log.debug("X-Forwarded-For set to: {}", remoteAddr);
         ctx.getZuulRequestHeaders().put(X_FORWARDED_FOR, remoteAddr);
+        ctx.getZuulRequestHeaders().put(X_FORWARDED_PROTO, protocol);
         return null;
     }
 }

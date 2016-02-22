@@ -16,8 +16,11 @@
 
 package net.prasenjit.micro.controller;
 
+import net.prasenjit.micro.client.Data;
+import net.prasenjit.micro.client.SharedClient;
 import net.prasenjit.micro.domain.AutoCloseA;
 import net.prasenjit.micro.domain.CloneClass;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +36,9 @@ import java.util.Map;
  */
 @RestController
 public class HomeController {
+
+    @Autowired
+    private SharedClient sharedClient;
 
     @RequestMapping("/api")
     public Map<String, String> home() throws IOException {
@@ -65,5 +71,11 @@ public class HomeController {
             e.printStackTrace();
         }
         return "done...";
+    }
+
+    @RequestMapping("/feign")
+    public Map<String, Data> feignTest(){
+        Map<String, Data> props = sharedClient.findAllProfileProperties("default");
+        return props;
     }
 }
