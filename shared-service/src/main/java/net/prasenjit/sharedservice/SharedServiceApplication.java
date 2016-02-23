@@ -16,15 +16,18 @@
 
 package net.prasenjit.sharedservice;
 
+import net.prasenjit.sharedservice.repository.ProfileItemRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Created by pp03582 on 2/19/2016.
  */
 @EnableDiscoveryClient
 @SpringBootApplication
+@EnableJpaRepositories(basePackageClasses = ProfileItemRepository.class)
 public class SharedServiceApplication {
 
     public static void main(String[] args) {

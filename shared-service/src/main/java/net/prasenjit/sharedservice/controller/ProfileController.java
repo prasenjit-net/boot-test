@@ -17,13 +17,15 @@
 package net.prasenjit.sharedservice.controller;
 
 import net.prasenjit.sharedservice.domain.ItemData;
+import net.prasenjit.sharedservice.repository.ProfileItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -33,8 +35,15 @@ import java.util.Map;
 @RequestMapping(value = "profile", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileController {
 
+    @Autowired
+    private ProfileItemRepository itemRepository;
+
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Map<String, ItemData> listAll(@PathVariable(value = "id") String id) {
-        return Collections.emptyMap();
+        Map<String, ItemData> result = new HashMap<>();
+        itemRepository.findAll().stream().forEach(pi -> {
+            result.put(pi.getProfileId() + "$$" + pi.getItemKey(), pi.getItemValue());
+        });
+        return result;
     }
 }

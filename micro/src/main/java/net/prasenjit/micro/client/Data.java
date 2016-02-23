@@ -22,5 +22,5 @@ package net.prasenjit.micro.client;
 @lombok.Data
 public class Data {
     private String dataType;
-    private String data;
+    private Object data;
 }

@@ -16,11 +16,63 @@
 
 package net.prasenjit.sharedservice.domain;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by pp03582 on 2/19/2016.
  */
-@lombok.Data
+@Builder
+@ToString
+@EqualsAndHashCode
+@JsonSerialize(using = ItemData.ItemDataSerializer.class)
 public class ItemData {
+    @Getter
     private DataType dataType;
+
+    @Getter
     private Object data;
+
+    public static class ItemDataSerializer extends JsonSerializer<ItemData> {
+
+        @Override
+        public void serialize(ItemData value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+            gen.writeStartObject();
+            gen.writeStringField("dataType", value.getDataType().name());
+            switch (value.getDataType()) {
+                case STRING:
+                    gen.writeFieldName("data");
+                    gen.writeRawValue((String) value.getData());
+                    break;
+                case LIST:
+                    List<?> listValue = (List<?>) value.getData();
+                    gen.writeArrayFieldStart("data");
+                    for (Object item : listValue) {
+                        gen.writeString((String) item);
+                    }
+                    gen.writeEndArray();
+                    break;
+                case HASH:
+                    Map<?, ?> mapValue = (Map<?, ?>) value.getData();
+                    gen.writeFieldName("data");
+                    gen.writeStartObject();
+                    for (Map.Entry<?, ?> item : mapValue.entrySet()) {
+                        gen.writeStringField((String) item.getKey(), (String) item.getValue());
+                    }
+                    gen.writeEndObject();
+            }
+            gen.writeEndObject();
+        }
+    }
 }

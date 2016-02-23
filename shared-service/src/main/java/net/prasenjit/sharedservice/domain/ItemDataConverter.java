@@ -16,32 +16,55 @@
 
 package net.prasenjit.sharedservice.domain;
 
-import org.springframework.util.Assert;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.persistence.AttributeConverter;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by pp03582 on 2/22/2016.
  */
 public class ItemDataConverter implements AttributeConverter<ItemData, String> {
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public String convertToDatabaseColumn(ItemData attribute) {
-        Assert.notNull(attribute.getDataType(), "data type must not be null");
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        PrintWriter writer = new PrintWriter(stream);
-        writer.println(attribute.getDataType().name());
-        switch (attribute.getDataType()) {
-            case STRING:
-                writer.print(attribute.getData());
-                break;
+        StringBuilder sb = new StringBuilder();
+        sb.append(attribute.getDataType().name()).append('|');
+        try {
+            sb.append(objectMapper.writeValueAsString(attribute.getData()));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
-        return null;
+        return sb.toString();
     }
 
     @Override
     public ItemData convertToEntityAttribute(String dbData) {
-        return null;
+        int separator = dbData.indexOf('|');
+        String enumName = dbData.substring(0, separator);
+        DataType dataType = DataType.valueOf(enumName);
+        ItemData.ItemDataBuilder itemDataBuilder = ItemData.builder();
+        itemDataBuilder.dataType(dataType);
+        try {
+            switch (dataType) {
+                case STRING:
+                    itemDataBuilder.data(dbData.substring(separator + 1));
+                    break;
+                case LIST:
+                    itemDataBuilder.data(objectMapper.readValue(dbData.substring(separator + 1), List.class));
+                    break;
+                case HASH:
+                    itemDataBuilder.data(objectMapper.readValue(dbData.substring(separator + 1), Map.class));
+                    break;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return itemDataBuilder.build();
     }
 }

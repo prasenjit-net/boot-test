@@ -29,6 +29,6 @@ import java.util.Map;
  */
 @FeignClient("sharedservice")
 public interface SharedClient {
-    @RequestMapping(value = "profile/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @RequestMapping(value = "/profile/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     Map<String, Data> findAllProfileProperties(@PathVariable("id") String profileId);
 }

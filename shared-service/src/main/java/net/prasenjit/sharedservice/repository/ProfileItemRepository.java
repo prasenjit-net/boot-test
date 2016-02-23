@@ -14,11 +14,13 @@
  *    limitations under the License.
  */
 
-package net.prasenjit.sharedservice.domain;
+package net.prasenjit.sharedservice.repository;
+
+import net.prasenjit.sharedservice.domain.ProfileItem;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * Created by pp03582 on 2/19/2016.
+ * Created by pp03582 on 2/23/2016.
  */
-public enum DataType {
-    STRING, HASH, LIST
+public interface ProfileItemRepository extends JpaRepository<ProfileItem, ProfileItem.ProfileItemKey> {
 }
