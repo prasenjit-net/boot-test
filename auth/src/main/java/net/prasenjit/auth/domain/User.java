@@ -33,7 +33,7 @@ public class User implements UserDetails {
     private boolean enabled;
     @Column(name = "PASSWORD_CHANGE_DATE", nullable = true)
     private Date passwordChangeDate;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "SCOPES", joinColumns = @JoinColumn(name = "USERNAME"))
     private Set<Scope> authorities;
 
