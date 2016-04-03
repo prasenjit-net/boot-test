@@ -1,0 +1,15 @@
+info:
+  version: @project.version@
+server:
+  port: 6060
+  context-path: /uaa
+spring:
+  application:
+    name: auth
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+security:
+  user:
+    password: password

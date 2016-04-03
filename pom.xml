@@ -29,6 +29,7 @@
         <module>micro</module>
         <module>shared-service</module>
         <module>admin</module>
+        <module>auth</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -70,7 +71,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Angel.SR6</version>
+                <version>Brixton.RC1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
