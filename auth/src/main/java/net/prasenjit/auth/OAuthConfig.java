@@ -1,5 +1,6 @@
 package net.prasenjit.auth;
 
+import net.prasenjit.auth.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,13 +20,12 @@ public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private ClientService clientService;
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                .withClient("acme")
-                .secret("acmesecret")
-                .authorizedGrantTypes("authorization_code", "refresh_token",
-                        "password").scopes("openid");
+        clients.withClientDetails(clientService);
     }
 
     @Override

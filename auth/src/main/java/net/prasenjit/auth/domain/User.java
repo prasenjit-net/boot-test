@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,6 +37,8 @@ public class User implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "SCOPES", joinColumns = @JoinColumn(name = "USERNAME"))
     private Set<Scope> authorities;
+    @OneToMany(mappedBy = "user")
+    private List<Client> clients;
 
     @Override
     public boolean isCredentialsNonExpired() {
