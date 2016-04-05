@@ -17,11 +17,16 @@
 package net.prasenjit.auth.service;
 
 import net.prasenjit.auth.domain.User;
+import net.prasenjit.auth.model.UserData;
 import net.prasenjit.auth.repository.UserRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,6 +37,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+	private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -41,4 +49,111 @@ public class UserService implements UserDetailsService {
         }
         return user;
     }
+    
+    public boolean registerUser(UserData userdata) {
+
+		User user = userRepository.findOne(userdata.getUsername());
+
+		if (user != null) {
+			return false;
+		}
+
+		User objuser = new User();
+
+		String encryptedpassword = passwordEncoder.encode(userdata.getPassword());
+
+		objuser.setName(userdata.getName());
+		objuser.setUsername(userdata.getUsername());
+		objuser.setPassword(encryptedpassword);
+
+		userRepository.save(objuser);
+
+		return true;
+
+	}
+
+	public boolean changePassword(String userid, String oldpassword, String newpassword) {
+
+		User user = userRepository.getOne(userid);
+
+		if (user != null) {
+			boolean ispasswordmatches = passwordEncoder.matches(oldpassword, user.getPassword());
+
+			String encryptedpassword = passwordEncoder.encode(user.getPassword());
+
+			if (ispasswordmatches) {
+
+				user.setPassword(encryptedpassword);
+
+				userRepository.save(user);
+
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+
+	}
+
+	public List<User> getAllUser() {
+
+		return userRepository.findAll();
+
+	}
+
+	public boolean lockUser(String userid) {
+
+		User user = userRepository.getOne(userid);
+
+		if (user != null) {
+
+			user.setAccountNonLocked(false);
+
+			return true;
+		}
+		return false;
+
+	}
+	
+	public boolean unLockuser(String userid) {
+
+		User user = userRepository.getOne(userid);
+
+		if (user != null) {
+
+			user.setAccountNonLocked(true);
+
+			return true;
+		}
+		return false;
+
+	}
+	
+	public boolean disableUser(String userid) {
+
+		User user = userRepository.getOne(userid);
+
+		if (user != null) {
+
+			user.setEnabled(false);
+
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean enableUser(String userid) {
+
+		User user = userRepository.getOne(userid);
+		
+		if (user != null) {
+
+			user.setEnabled(true);
+
+			return true;
+		}
+		return false;
+	}
 }
