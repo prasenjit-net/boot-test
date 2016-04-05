@@ -17,14 +17,21 @@
 package net.prasenjit.auth;
 
 import net.prasenjit.auth.service.ClientService;
+import net.prasenjit.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+
+import java.util.Arrays;
 
 /**
  * Created by PRASEN on 4/3/2016.
@@ -34,10 +41,11 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
+    private UserService userService;
     @Autowired
     private ClientService clientService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -47,7 +55,7 @@ public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints)
             throws Exception {
-        endpoints.authenticationManager(authenticationManager);
+        endpoints.authenticationManager(userAuthenticationManager());
     }
 
     @Override
@@ -55,5 +63,13 @@ public class OAuthConfig extends AuthorizationServerConfigurerAdapter {
             throws Exception {
         oauthServer.tokenKeyAccess("permitAll()").checkTokenAccess(
                 "isAuthenticated()");
+    }
+
+    private AuthenticationManager userAuthenticationManager() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userService);
+        provider.setPasswordEncoder(passwordEncoder);
+        ProviderManager providerManager = new ProviderManager(Arrays.asList(provider));
+        return providerManager;
     }
 }

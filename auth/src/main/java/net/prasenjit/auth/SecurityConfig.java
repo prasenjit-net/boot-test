@@ -16,28 +16,43 @@
 
 package net.prasenjit.auth;
 
+import net.prasenjit.auth.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Created by PRASEN on 4/3/2016.
  */
 @Configuration
-//@Order(ManagementServerProperties.ACCESS_OVERRIDE_ORDER)
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private UserService userService;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.parentAuthenticationManager(authenticationManager);
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
     }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/webjars/**");
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.formLogin().loginPage("/login").permitAll().loginProcessingUrl("/login")
+                .and().authorizeRequests().anyRequest().authenticated();
+    }
+
 }
